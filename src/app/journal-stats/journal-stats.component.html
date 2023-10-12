@@ -1,0 +1,109 @@
+<div class="text-center my-3">
+  <h2 class="mb-4">Stats of journal {{ stats? stats.UserDefinedName:'' }}</h2>
+</div>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Globals</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Database</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">Process ID</button>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+    <table class="table table-striped" *ngIf="stats; else noData">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Global Reference</th>
+          <th>Count</th>
+          <th>SET</th>
+          <th>KILL</th>
+          <th>ZKILL</th>
+          <th>Others</th>
+          <th>Size</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let subject of stats.Globals;let position = index">
+          <td>{{ position + 1 }}</td>
+          <td>{{ subject.id }}</td>
+          <td>{{ subject.Count }}</td>
+          <td>{{ subject.Details.SET }}</td>
+          <td>{{ subject.Details.KILL }}</td>
+          <td>{{ subject.Details.ZKILL }}</td>
+          <td>{{ subject.Count - (subject.Details.SET + subject.Details.KILL + subject.Details.ZKILL) }}</td>
+          <td class="text-center"> {{ subject.Size | PrettyBytes }}</td>
+          <td>
+            <!--<button type="button" class="btn btn-info">Details</button>
+            <button type="button" class="btn btn-dark mx-2">View</button>-->
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noData>No stats data</ng-template>
+  </div>
+  <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+    <table class="table table-striped" *ngIf="stats; else noData">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Database</th>
+          <th>Count</th>
+          <th>SET</th>
+          <th>KILL</th>
+          <th>ZKILL</th>
+          <th>Others</th>
+          <th>Size</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let subject of stats.Databases;let position = index">
+          <td>{{ position + 1 }}</td>
+          <td>{{ subject.id }}</td>
+          <td>{{ subject.Count }}</td>
+          <td>{{ subject.Details.SET }}</td>
+          <td>{{ subject.Details.KILL }}</td>
+          <td>{{ subject.Details.ZKILL }}</td>
+          <td>{{ getOtherCount(subject) }}</td>
+          <td class="text-center"> {{ subject.Size | PrettyBytes }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">
+    <table class="table table-striped" *ngIf="stats; else noData">
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>Database</th>
+        <th>Count</th>
+        <th>SET</th>
+        <th>KILL</th>
+        <th>ZKILL</th>
+        <th>Others</th>
+        <th>Size</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let subject of stats.PID;let position = index">
+        <td>{{ position + 1 }}</td>
+        <td>{{ subject.id }}</td>
+        <td>{{ subject.Count }}</td>
+        <td>{{ subject.Details.SET }}</td>
+        <td>{{ subject.Details.KILL }}</td>
+        <td>{{ subject.Details.ZKILL }}</td>
+        <td>{{ subject.Count - (subject.Details.SET + subject.Details.KILL + subject.Details.ZKILL) }}</td>
+        <td class="text-center"> {{ subject.Size | PrettyBytes }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+

@@ -1,0 +1,7 @@
+{
+  "/jrnindexer/api/*": {
+    "target": "http://localhost:49187",
+    "secure": false,
+    "logLevel": "debug"
+  }
+}
