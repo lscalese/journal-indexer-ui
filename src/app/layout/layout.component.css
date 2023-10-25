@@ -1,0 +1,15 @@
+main {
+  height: 100vh;
+  max-height: 100vh;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.bi {
+  vertical-align: -.125em;
+  fill: currentColor;
+}
+
+.bd-mode-toggle .dropdown-menu .active .bi {
+  display: block !important;
+}
