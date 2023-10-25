@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { JournalService} from "../journal/journal.service";
 import { Journal } from "../models/journal";
-import { Router } from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {select, Store} from "@ngrx/store";
 import {AppState} from "../app-state";
 import {Observable} from "rxjs";
@@ -33,5 +33,9 @@ export class JournalListComponent implements OnInit {
 
   showStats(id: string) {
     this.router.navigate(['/stats/',id])
+  }
+
+  search(id: string) {
+    this.router.navigate(['/show/',id])
   }
 }

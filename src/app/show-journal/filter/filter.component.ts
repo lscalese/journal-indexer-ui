@@ -15,6 +15,7 @@ import {
 import {Filter} from "../../models/filter";
 import {FilterProperties} from "../../models/filter-properties";
 import {ShowServices} from "../show-services.service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-filter',
@@ -41,14 +42,10 @@ export class FilterComponent implements OnInit{
   constructor(private journalService:JournalService,
               private store: Store<AppState>,
               private formBuilder: FormBuilder,
-              private showService: ShowServices) {
+              private showService: ShowServices,
+              private route: ActivatedRoute) {
   }
   ngOnInit(): void {
-    this.journalService.updateIndexedJournals();
-    this.store.pipe(select('indexedJournal')).subscribe(indexedJournals => {
-      this.journals = indexedJournals;
-    })
-
     const tsRegex= /[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/
     const numberOrEmptyRegExp = /^[0-9]\d*$/
 
@@ -87,8 +84,33 @@ export class FilterComponent implements OnInit{
         validators: [filterPropertiesValidator()]}),
       Subscripts: this.formBuilder.array([])
     })
+
     this.control = <FormArray>this.filterForm.controls['Subscripts']
     this.control.push(this.patchValues(1, '=', '', '', ''))
+
+    this.journalService.updateIndexedJournals();
+    this.store.pipe(select('indexedJournal')).subscribe(indexedJournals => {
+      this.journals = indexedJournals;
+      this.route.params.subscribe(params => {
+        if ((params['id'] !== undefined) &&(params['id'] !== '')) {
+          this.filterForm.controls['File'].setValue( { Operator: "=",  Value: parseInt(params['id'])})
+          this.onSelectJournal()
+        }
+      })
+    })
+
+    this.route.queryParams.subscribe(params => {
+      if ((params['global'] !== undefined) &&(params['global'] !== '')) {
+        this.filterForm.controls['GlobalName'].setValue( {Operator: "=", Value: params['global'] })
+      }
+      if ((params['database'] !== undefined) &&(params['database'] !== '')) {
+        this.filterForm.controls['DatabaseName'].setValue( {Operator: "=", Value: params['database'] })
+      }
+      if ((params['pid'] !== undefined) &&(params['pid'] !== '')) {
+        this.filterForm.controls['ProcessID'].setValue( {Operator: "=", Value: params['pid'] })
+      }
+    })
+
   }
 
   // assign the values
@@ -131,9 +153,12 @@ export class FilterComponent implements OnInit{
 
   onSelectJournal() {
     let id = this.filterForm.controls['File'].value['Value']
+    console.log('onselect', id)
     if (id == '0') return
 
+    console.log(this.journals)
     this.selectedJournal = this.journals.find( (element: Journal) => element.ID == id )
+    console.log('onselect', this.selectedJournal)
     if (this.selectedJournal === undefined) return;
 
     this.filterForm.controls['TimeStamp'].patchValue({Start: this.selectedJournal.FirstRecordTS, End: this.selectedJournal.LastRecordTS})
