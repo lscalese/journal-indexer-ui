@@ -1,11 +1,11 @@
 {
   "/jrnindexer/api/*": {
-    "target": "http://iris:52773",
+    "target": "http://journal-indexer-iris:52773",
     "secure": false,
     "logLevel": "debug"
   },
   "/jrnindexer/ws/*": {
-    "target": "ws://iris:52773",
+    "target": "ws://journal-indexer-iris:52773",
     "secure": false,
     "logLevel": "debug",
     "ws": true

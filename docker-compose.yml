@@ -1,0 +1,16 @@
+version: '3.6'
+services:
+  journal-indexer-ui:
+    networks:
+      indexer_net:
+    container_name: journal-indexer-ui
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - 14200:80
+    volumes:
+      - ./journal-indexer-ui.conf:/etc/nginx/conf.d/default.conf
+networks:
+  indexer_net:
+    external: true

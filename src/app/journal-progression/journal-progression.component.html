@@ -13,7 +13,7 @@
   </div>
 
   <div class="row">
-    <div class="col-2"><p class="text-md-start">Step 1 - file exists:</p></div>
+    <div class="col-2"><p class="text-md-start fol">Step 1 - file exists:</p></div>
     <div class="col">
       <div class="alert rounded-0" [class.alert-danger]="!indexerProgression.FileExists" [class.alert-success]="indexerProgression.FileExists" role="alert">
         {{ (indexerProgression.FileExists) ? 'File exists on the server': 'File does not exist on the server!' }}
@@ -21,7 +21,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-2"><p class="text-md-start">Step 2 - file is valid:</p></div>
+    <div class="col-2"><p class="text-md-start fw-bold">Step 2 - file is valid:</p></div>
     <div class="col">
       <div class="alert rounded-0" [class.alert-danger]="!indexerProgression.IsValid" [class.alert-success]="indexerProgression.IsValid" role="alert">
         {{ (indexerProgression.IsValid) ? 'Is a valid journal file.': 'Is not a valid journal file!' }}
