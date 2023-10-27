@@ -159,110 +159,30 @@
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="exampleModalLabel">{{ this.selectedStatsData?.id }}</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Journal entry type</th>
-              <th>Count</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>SET</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.SET: 0 }}</td>
-            </tr>
-            <tr>
-              <td>KILL</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.KILL: 0 }}</td>
-            </tr>
-            <tr>
-              <td>ZKILL</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.ZKILL: 0 }}</td>
-            </tr>
-            <tr>
-              <td>BitSET</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.BitSET: 0 }}</td>
-            </tr>
-            <tr>
-              <td>RemoteSET</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.RemoteSET: 0 }}</td>
-            </tr>
-            <tr>
-              <td>RemoteKILL</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.RemoteKILL: 0 }}</td>
-            </tr>
-            <tr>
-              <td>RemoteZKILL</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.RemoteZKILL: 0 }}</td>
-            </tr>
-            <tr>
-              <td>MirrorSET</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.MirrorSET: 0 }}</td>
-            </tr>
-            <tr>
-              <td>MirrorKILL</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.MirrorKILL: 0 }}</td>
-            </tr>
-            <tr>
-              <td>KILLdes</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.KILLdes: 0 }}</td>
-            </tr>
-            <tr>
-              <td>BeginTrans</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.BeginTrans: 0 }}</td>
-            </tr>
-            <tr>
-              <td>CommitTrans</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.CommitTrans: 0 }}</td>
-            </tr>
-            <tr>
-              <td>VecKILL</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.VecKILL: 0 }}</td>
-            </tr><tr>
-              <td>VecSET</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.VecSET: 0 }}</td>
-            </tr>
-            <tr>
-              <td>Rollback</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.Rollback: 0 }}</td>
-            </tr>
-            <tr>
-              <td>netsyn</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.netsyn: 0 }}</td>
-            </tr>
-            <tr>
-              <td>Enqueue</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.Enqueue: 0 }}</td>
-            </tr>
-            <tr>
-              <td>Dequeue</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.Dequeue: 0 }}</td>
-            </tr>
-            <tr>
-              <td>extrec</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.extrec: 0 }}</td>
-            </tr>
-            <tr>
-              <td>pad</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.pad: 0 }}</td>
-            </tr>
-            <tr>
-              <td>blkhdr</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.blkhdr: 0 }}</td>
-            </tr>
-            <tr>
-              <td>dirtab</td>
-              <td>{{ (this.selectedStatsData!== undefined) ? this.selectedStatsData?.Details?.dirtab: 0 }}</td>
-            </tr>
-          </tbody>
-        </table>
+
+        <div class="row row-cols-1 row-cols-md-3 mb-3 text-center" *ngIf="(selectedStatsData !== undefined) && (selectedStatsData?.Details !== undefined)">
+          <ng-container *ngIf="selectedStatsData?.Details as dt">
+            <ng-container *ngFor="let key of ['SET', 'KILL', 'ZKILL', 'BitSET', 'RemoteSET', 'RemoteKILL', 'RemoteZKILL', 'MirrorSET', 'MirrorKILL','KILLdes','BeginTrans','CommitTrans','VecKILL','VecSET','Rollback','netsyn','Enqueue','Dequeue','extrec','pad','blkhdr','dirtab']">
+              <div class="col" *ngIf="getCount(key,dt) !== undefined">
+                <div class="card mb-4 rounded-3 shadow-sm">
+                  <div class="card-header py-3">
+                    <h4 class="my-0 fw-normal">{{ key }}</h4>
+                  </div>
+                  <div class="card-body">
+                    <h1 class="card-title pricing-card-title">{{ getCount(key, dt) }}</h1>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

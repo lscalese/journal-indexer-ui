@@ -3,6 +3,7 @@ import { JournalService } from "../journal/journal.service";
 import {Stats} from "../models/stats";
 import {ActivatedRoute, Router} from "@angular/router";
 import {StatsData} from "../models/stats-data";
+import {TypeDetails} from "../models/type-details";
 
 @Component({
   selector: 'app-journal-stats',
@@ -55,4 +56,10 @@ export class JournalStatsComponent implements OnInit {
   searchPID( pid: string) {
     this.router.navigate(['/show', this.currentJournal], { queryParams: { pid: pid }})
   }
+
+  getCount(key: string, details: TypeDetails): number|undefined {
+    let str = key as keyof typeof details;
+    return details[str];
+  }
+
 }

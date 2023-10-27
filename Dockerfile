@@ -2,7 +2,7 @@ FROM node:18.10-alpine AS build
 
 USER root
 WORKDIR /app
-RUN apt-get update && apt-get --assume-yes install git
+COPY . .
 RUN npm install
 RUN npm run build
 #

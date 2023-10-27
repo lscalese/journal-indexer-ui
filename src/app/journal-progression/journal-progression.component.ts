@@ -27,7 +27,10 @@ export class JournalProgressionComponent implements OnInit {
     this.progression$ = this.store.pipe(select('progression'))
     this.progression$.subscribe(progression => {
       this.indexerProgression = progression
-      if (this.indexerProgression.Message == 'Done') this.journalService.updateIndexedJournals()
+      if (this.indexerProgression.Status == 'Done') {
+        console.log('update indexed journal')
+        this.journalService.updateIndexedJournals()
+      }
     })
   }
 

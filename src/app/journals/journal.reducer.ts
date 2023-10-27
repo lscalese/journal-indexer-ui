@@ -29,6 +29,7 @@ export const IndexedJournalReducer = createReducer(
   initialJournalList,
   on(AddIndexedJournal, (state, indexedJournal) => {
     // console.log('add indexed journal')
+    if (state.findIndex((el) => el.ID == indexedJournal.ID) !== -1) return [...state]
     return [...state,indexedJournal]
   }),
   on(ClearIndexedJournal, (state) => {
