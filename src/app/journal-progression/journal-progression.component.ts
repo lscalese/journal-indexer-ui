@@ -23,7 +23,8 @@ export class JournalProgressionComponent implements OnInit {
   constructor(private fileService: JournalFileService,
               private activatedRoute: ActivatedRoute,
               private store:Store<AppState>,
-              private journalService: JournalService) {
+              private journalService: JournalService,
+              private router: Router) {
     this.progression$ = this.store.pipe(select('progression'))
     this.progression$.subscribe(progression => {
       this.indexerProgression = progression
@@ -44,5 +45,11 @@ export class JournalProgressionComponent implements OnInit {
     if (this.token == '') return;
     console.log("send refresh.")
     this.fileService.progression(this.token)
+  }
+
+  showStats(id: string|undefined) {
+    if (id !== undefined) {
+      this.router.navigate(['/stats', id])
+    }
   }
 }

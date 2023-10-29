@@ -11,4 +11,5 @@ export interface IndexerProgression {
   Message?: string;
   MessageType?: string;
   Token?: string;
+  FileId?: string;
 }
