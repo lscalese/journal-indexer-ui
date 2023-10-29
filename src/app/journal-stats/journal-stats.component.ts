@@ -18,6 +18,8 @@ export class JournalStatsComponent implements OnInit {
 
   currentJournal: string = '0';
 
+  state: string = '';
+
   constructor(private journalService:JournalService,
               private activatedRoute: ActivatedRoute,
               private router: Router,) {
@@ -31,7 +33,21 @@ export class JournalStatsComponent implements OnInit {
     if (id) {
       this.currentJournal = id
 
-      this.journalService.getStats(parseInt(<string>id)).subscribe(stats => { this.stats = stats })
+      this.state = 'loading'
+      // this.journalService.getStats(parseInt(<string>id)).subscribe(stats => { this.stats = stats })
+      this.journalService.getStats(parseInt(<string>id)).subscribe({
+        next: (stats: Stats) => {
+          this.stats = stats
+          this.state = 'loaded'
+        },
+        error: (err: any)=> {
+          this.state = 'error'
+        },
+        complete: () => {
+          this.state = ''
+        }
+      })
+
       this.activatedRoute.params.subscribe(routeParams => {
         this.journalService.getStats(parseInt(routeParams['id'])).subscribe(stats => { this.stats = stats })
       })

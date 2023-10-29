@@ -2,70 +2,126 @@
   <span class="fs-4">Stats of journal {{ stats? stats.UserDefinedName:'' }}</span>
 </header>
 
-
-  <ul class="nav nav-tabs" id="myTab" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Globals</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Database</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">Process ID</button>
-  </li>
-</ul>
-<div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
-    <table class="table table-striped" *ngIf="stats; else noData">
-      <thead class="position-sticky" style="top: 0">
-        <tr>
-          <th>#</th>
-          <th>Global Reference</th>
-          <th>Count</th>
-          <th>SET</th>
-          <th>KILL</th>
-          <th>ZKILL</th>
-          <th>Others</th>
-          <th>Size</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let subject of stats.Globals;let position = index">
-          <td>{{ position + 1 }}</td>
-          <td>{{ subject.id }}</td>
-          <td>{{ subject.Count }}</td>
-          <td>{{ subject.Details.SET }}</td>
-          <td>{{ subject.Details.KILL }}</td>
-          <td>{{ subject.Details.ZKILL }}</td>
-          <td>{{ getOtherCount(subject) }}</td>
-          <td class="text-center"> {{ subject.Size | PrettyBytes }}</td>
-          <td>
-            <button type="button" class="btn btn-dark" data-bs-toggle="modal"
-                    data-bs-target="#exampleModal" (click)="this.selectedStatsData=subject">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
-                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
-              </svg>
-              Details
-            </button>
-            <button class="btn btn-dark mx-1" (click)="searchGlobal( subject.id )">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-              </svg>
-              Search
-            </button>
-
-
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <ng-template #noData>No stats data</ng-template>
+<div class="container" *ngIf="state === 'loading'">
+  <div class="row m-4 text-center">
+    <div class="col text-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
   </div>
-  <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
-    <table class="table table-striped" *ngIf="stats; else noData">
-      <thead class="position-sticky" style="top: 0">
+</div>
+
+<ng-container *ngIf="state !== 'loading'">
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Globals</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Database</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">Process ID</button>
+    </li>
+  </ul>
+  <div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+      <table class="table table-striped" *ngIf="stats; else noData">
+        <thead class="position-sticky" style="top: 0">
+          <tr>
+            <th>#</th>
+            <th>Global Reference</th>
+            <th>Count</th>
+            <th>SET</th>
+            <th>KILL</th>
+            <th>ZKILL</th>
+            <th>Others</th>
+            <th>Size</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let subject of stats.Globals;let position = index">
+            <td>{{ position + 1 }}</td>
+            <td>{{ subject.id }}</td>
+            <td>{{ subject.Count }}</td>
+            <td>{{ subject.Details.SET }}</td>
+            <td>{{ subject.Details.KILL }}</td>
+            <td>{{ subject.Details.ZKILL }}</td>
+            <td>{{ getOtherCount(subject) }}</td>
+            <td class="text-center"> {{ subject.Size | PrettyBytes }}</td>
+            <td>
+              <button type="button" class="btn btn-dark" data-bs-toggle="modal"
+                      data-bs-target="#exampleModal" (click)="this.selectedStatsData=subject">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                  <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                </svg>
+                Details
+              </button>
+              <button class="btn btn-dark mx-1" (click)="searchGlobal( subject.id )">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                </svg>
+                Search
+              </button>
+
+
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-template #noData>No stats data</ng-template>
+    </div>
+    <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+      <table class="table table-striped" *ngIf="stats; else noData">
+        <thead class="position-sticky" style="top: 0">
+          <tr>
+            <th>#</th>
+            <th>Database</th>
+            <th>Count</th>
+            <th>SET</th>
+            <th>KILL</th>
+            <th>ZKILL</th>
+            <th>Others</th>
+            <th>Size</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let subject of stats.Databases;let position = index">
+            <td>{{ position + 1 }}</td>
+            <td>{{ subject.id }}</td>
+            <td>{{ subject.Count }}</td>
+            <td>{{ subject.Details.SET }}</td>
+            <td>{{ subject.Details.KILL }}</td>
+            <td>{{ subject.Details.ZKILL }}</td>
+            <td>{{ getOtherCount(subject) }}</td>
+            <td class="text-center"> {{ subject.Size | PrettyBytes }}</td>
+            <td>
+              <button type="button" class="btn btn-dark" data-bs-toggle="modal"
+                      data-bs-target="#exampleModal" (click)="this.selectedStatsData=subject">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                  <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                </svg>
+                Details
+              </button>
+              <button class="btn btn-dark mx-1" (click)="searchDatabase( subject.id )">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                  <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                </svg>
+                Search
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">
+      <table class="table table-striped" *ngIf="stats; else noData">
+        <thead class="position-sticky" style="top: 0">
         <tr>
           <th>#</th>
           <th>Database</th>
@@ -77,9 +133,9 @@
           <th>Size</th>
           <th>Actions</th>
         </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let subject of stats.Databases;let position = index">
+        </thead>
+        <tbody>
+        <tr *ngFor="let subject of stats.PID;let position = index">
           <td>{{ position + 1 }}</td>
           <td>{{ subject.id }}</td>
           <td>{{ subject.Count }}</td>
@@ -97,64 +153,18 @@
               </svg>
               Details
             </button>
-            <button class="btn btn-dark mx-1" (click)="searchDatabase( subject.id )">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
-                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+            <button class="btn btn-dark mx-1" (click)="searchPID( subject.id )">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
               </svg>
               Search
             </button>
           </td>
         </tr>
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">
-    <table class="table table-striped" *ngIf="stats; else noData">
-      <thead class="position-sticky" style="top: 0">
-      <tr>
-        <th>#</th>
-        <th>Database</th>
-        <th>Count</th>
-        <th>SET</th>
-        <th>KILL</th>
-        <th>ZKILL</th>
-        <th>Others</th>
-        <th>Size</th>
-        <th>Actions</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let subject of stats.PID;let position = index">
-        <td>{{ position + 1 }}</td>
-        <td>{{ subject.id }}</td>
-        <td>{{ subject.Count }}</td>
-        <td>{{ subject.Details.SET }}</td>
-        <td>{{ subject.Details.KILL }}</td>
-        <td>{{ subject.Details.ZKILL }}</td>
-        <td>{{ getOtherCount(subject) }}</td>
-        <td class="text-center"> {{ subject.Size | PrettyBytes }}</td>
-        <td>
-          <button type="button" class="btn btn-dark" data-bs-toggle="modal"
-                  data-bs-target="#exampleModal" (click)="this.selectedStatsData=subject">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
-              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-              <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
-            </svg>
-            Details
-          </button>
-          <button class="btn btn-dark mx-1" (click)="searchPID( subject.id )">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-            </svg>
-            Search
-          </button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
 
 
 <!-- Modal -->
@@ -190,3 +200,4 @@
     </div>
   </div>
 </div>
+</ng-container>
