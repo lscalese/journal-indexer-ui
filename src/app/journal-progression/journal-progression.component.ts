@@ -37,9 +37,10 @@ export class JournalProgressionComponent implements OnInit {
 
   ngOnInit() {
     this.token = <string>this.activatedRoute.snapshot.paramMap.get('token');
-    // this.activatedRoute.params.subscribe(param => {
-    //   this.token = param['token']
-    // })
+     this.activatedRoute.params.subscribe(param => {
+       this.token = param['token']
+       this.refresh()
+    })
   }
   refresh() {
     if (this.token == '') return;

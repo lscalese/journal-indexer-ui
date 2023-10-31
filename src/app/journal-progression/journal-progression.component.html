@@ -13,7 +13,7 @@
   </div>
 
   <div class="row">
-    <div class="col-2"><p class="text-md-start fol">Step 1 - file exists:</p></div>
+    <div class="col-2"><p class="text-md-start fol" [class.fw-bold]="indexerProgression.Action==='FE'">Step 1 - file exists:</p></div>
     <div class="col">
       <div class="alert rounded-0" [class.alert-danger]="!indexerProgression.FileExists" [class.alert-success]="indexerProgression.FileExists" role="alert">
         {{ (indexerProgression.FileExists) ? 'File exists on the server': 'File does not exist on the server!' }}
@@ -21,7 +21,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-2"><p class="text-md-start fw-bold">Step 2 - file is valid:</p></div>
+    <div class="col-2"><p class="text-md-start" [class.fw-bold]="indexerProgression.Action==='FV'">Step 2 - file is valid:</p></div>
     <div class="col">
       <div class="alert rounded-0" [class.alert-danger]="!indexerProgression.IsValid" [class.alert-success]="indexerProgression.IsValid" role="alert">
         {{ (indexerProgression.IsValid) ? 'Is a valid journal file.': 'Is not a valid journal file!' }}
@@ -29,7 +29,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-2"><p class="text-md-start">Step 3 - load data:</p></div>
+    <div class="col-2"><p class="text-md-start" [class.fw-bold]="indexerProgression.Action==='Load'">Step 3 - load data:</p></div>
     <div class="col">
       <div style="height: 32px;" class="progress" role="progressbar" aria-label="Example with label" [attr.aria-valuenow]="indexerProgression.Load" aria-valuemin="0" aria-valuemax="100">
         <div class="progress-bar" style="width: {{indexerProgression.Load}}%">{{ indexerProgression.Load }}%</div>
@@ -37,7 +37,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-2"><p class="text-md-start">Step 4 - flush buffer:</p></div>
+    <div class="col-2"><p class="text-md-start" [class.fw-bold]="indexerProgression.Action==='FB'">Step 4 - flush buffer:</p></div>
     <div class="col">
 
       <ng-container *ngIf="indexerProgression.Action=='FB'; else fs">
@@ -67,7 +67,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-2"><p class="text-md-start">Step 5 - build indices:</p></div>
+    <div class="col-2"><p class="text-md-start" [class.fw-bold]="indexerProgression.Action==='BI'">Step 5 - build indices:</p></div>
     <div class="col">
       <div class="col">
 
@@ -99,7 +99,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-2"><p class="text-md-start">Result:</p></div>
+    <div class="col-2"><p class="text-md-start" [class.fw-bold]="indexerProgression.Action==='END'">Result:</p></div>
     <div class="col">
       <ng-container *ngIf="indexerProgression.Message!==''; else noMsg">
         <div class="alert rounded-0" [class.alert-danger]="indexerProgression.Status=='ERR'" [class.alert-success]="indexerProgression.Status!=='ERR'" role="alert">

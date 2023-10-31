@@ -10,7 +10,7 @@ import {AppState} from "./app-state";
 import {LoginService} from "./login/login.service";
 import {HttpHeaders} from "@angular/common/http";
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
-import {Subject} from "rxjs";
+import {retry, Subject} from "rxjs";
 import {ChangeDetection} from "@angular/cli/lib/config/workspace-schema";
 
 
@@ -39,20 +39,18 @@ export class AppComponent implements OnInit, OnDestroy{
   ngOnInit() {
     const socket$ = this.websocketService.connect();
 
-    socket$.subscribe(
-      (message: IndexerProgression) => {
+    socket$.pipe(retry({count: 9999, delay: 5000})).subscribe({
+      next: (message: IndexerProgression) => {
         console.log('Message reçu : ', message);
         if (message.MessageType == 'INDEXER') {
           this.store.dispatch(UpdateProgression(message))
         }
       },
-      (error: any) => {
-        console.error('Error WebSocket : ', error);
-      },
-      () => {
-        console.log('Connexion WebSocket closed.');
+      error: (error) => {
+        console.error('Error WebSocket: ', error)
       }
-    );
+    })
+
   }
   ngOnDestroy() {
     this.websocketService.close();
