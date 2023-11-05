@@ -53,6 +53,21 @@
               ],
               "outputHashing": "all"
             },
+            "webgateway": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "2mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all"
+            },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
@@ -79,6 +94,9 @@
             "production": {
               "browserTarget": "journal-indexer-ui:build:production",
               "proxyConfig": "proxy-docker.conf.json"
+            },
+            "webgateway": {
+              "browserTarget": "journal-indexer-ui:build:production"
             },
             "development": {
               "browserTarget": "journal-indexer-ui:build:development",
